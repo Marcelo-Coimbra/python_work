@@ -1,0 +1,14 @@
+age = 18
+age2 = 21
+
+print(age == 18)
+print(age > 18)
+print(age <= 18)
+
+print(age and age2 >= 18)
+print((age or age2) == 20)
+
+print("\n - - -")
+
+request_toppings = ['mushrooms', 'onions', 'pinapple']
+print('onions' in request_toppings)
