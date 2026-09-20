@@ -8,7 +8,7 @@ class Car:
 
     def get_descriptive_name(self):
         long_name = f"{self.year} {self.make} {self.model}"
-        return long_name
+        return long_name.title()
 
     def read_odometer(self):
         print(f"This car has {self.odometer_reading} miles on it.")
@@ -21,36 +21,4 @@ class Car:
 
     def increment_odometer(self, miles):
         self.odometer_reading += miles
-
-class Battery:
-
-    def __init__(self, batery_size=40):
-        self.battery_size = batery_size
-
-    def describe_battery(self):
-        print(f"This car has a {self.battery_size}-kwh battery.")
-    
-""" my_new_car = Car('audi', 'a4', 2024)
-print(my_new_car.get_descriptive_name())
-my_new_car.update_odometer(23)
-my_new_car.read_odometer()
-my_new_car.update_odometer(22)
-my_new_car.read_odometer() """
-
-""" my_used_car = Car('subaru', 'outback', 2019)
-print(my_used_car.get_descriptive_name())
-
-my_used_car.update_odometer(23500)
-my_used_car.read_odometer()
-
-my_used_car.increment_odometer(100)
-my_used_car.read_odometer() """
-
-class EletricCar(Car):
-    def __init__(self, make, model, year):
-        super().__init__(make, model, year)
-        self.battery = Battery()
-
-my_leaf = EletricCar('nissan', 'leaf', '2024')
-print(my_leaf.get_descriptive_name())
-my_leaf.battery.describe_battery()
+        
