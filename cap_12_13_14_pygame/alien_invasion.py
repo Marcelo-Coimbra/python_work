@@ -3,6 +3,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion():
 
@@ -19,6 +20,9 @@ class AlienInvasion():
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
+
+        self._create_fleet()
 
     def run_game(self):
         """ Inicia o loop principal do jogo """
@@ -72,13 +76,41 @@ class AlienInvasion():
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-    
+
+    def _create_fleet(self):
+        """ Cria a frota de alienígenas """
+        # Cria um alienígena econtinua adicionando alienígenas
+        # Até que não haja mais espaço
+        # O distanciamento entre os alienígenas é a largura
+        # de um alienígena e uma altura de alienígena
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.width, alien_height
+
+        current_x, current_Y = alien_width, alien_height
+        while current_Y < (self.settings.screen_height - 3 * alien_width):
+            while current_x < (self.settings.screen_width - 2 * alien_width):
+                self._create_alien(current_x, current_Y)
+                current_x += 2 * alien_width
+
+            # Termina uma fileira; redefine o valor de x, e incrementa o valor de y
+            current_x = alien_width
+            current_Y += 2 * alien_height
+
+    def _create_alien(self, x_position, y_position):
+        """ Cria um alienígena e o posiciona na frota """
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x = x_position
+        new_alien.rect.y = y_position
+        self.aliens.add(new_alien)
+                            
     def _update_screen(self):
         """ Atualiza as imagens na tela e mude para a nova tela """
         self.screen.fill(self.settings.bg_collor)
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
+        self.aliens.draw(self.screen)
 
         # Deixa a tela desenhada mais recente visível
         pygame.display.flip()
