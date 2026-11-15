@@ -30,6 +30,7 @@ class AlienInvasion():
             self._check_events()
             self.ship.update()
             self._uppdate_bullets()
+            self._update_aliens()
             self._update_screen()
             self.clock.tick(60)
           
@@ -77,6 +78,10 @@ class AlienInvasion():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+    def _update_aliens(self):
+        """ Atualiza as posições de todos os alienígenas da frota """
+        self.aliens.update()
+    
     def _create_fleet(self):
         """ Cria a frota de alienígenas """
         # Cria um alienígena econtinua adicionando alienígenas
