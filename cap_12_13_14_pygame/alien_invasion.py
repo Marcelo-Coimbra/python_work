@@ -72,14 +72,19 @@ class AlienInvasion():
         """ Atualiza a posição dos projéteis e descarta projéteis antigos"""
         # Atualiza as posições dos projéteis
         self.bullets.update()
-        
+
         # Descarta os projéteis que desaparecem
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        # Verifica se algum projétil atingiu um alienígena
+                # Se sim, descarta o projétil e o alienígena
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
     def _update_aliens(self):
-        """ Atualiza as posições de todos os alienígenas da frota """
+        """ Verifica se a frota está na borda e, em seguida, atualiza as posições """
+        self._check_fleet_edges()
         self.aliens.update()
     
     def _create_fleet(self):
@@ -101,6 +106,19 @@ class AlienInvasion():
             current_x = alien_width
             current_Y += 2 * alien_height
 
+    def _check_fleet_edges(self):
+        """ Responde apropriadamente se algum alienígena alcançou uma borda """
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """ Faz toda a frota descer e mudar de direção """
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+    
     def _create_alien(self, x_position, y_position):
         """ Cria um alienígena e o posiciona na frota """
         new_alien = Alien(self)
