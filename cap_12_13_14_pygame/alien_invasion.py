@@ -1,6 +1,10 @@
 import sys
+from time import sleep
+
 import pygame
+
 from settings import Settings
+from game_stats import Gamestats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -17,6 +21,9 @@ class AlienInvasion():
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
+
+        # Cria uma instâmcia para armazenar estatísticas do jogo
+        self.stats = Gamestats(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -78,14 +85,42 @@ class AlienInvasion():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
-        # Verifica se algum projétil atingiu um alienígena
-                # Se sim, descarta o projétil e o alienígena
+        self._check_bullet_alien_collisions()
+
+    def _check_bullet_alien_collisions(self):
+        """ Responde à colisões alienígenas """
+        # Remove todos os projéteis e os alienígenas que tenham colidido
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        if not self.aliens:
+            # Destrói os projéteis existentes e cria uma frota nova
+            self.bullets.empty()
+            self._create_fleet()
 
     def _update_aliens(self):
         """ Verifica se a frota está na borda e, em seguida, atualiza as posições """
         self._check_fleet_edges()
         self.aliens.update()
+
+        # Detecta colisões entre alienígenas e espaçonaves
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+    def _ship_hit(self):
+        """ Responde à espaçonave sendo abatida por um alienígena """
+        # Drecementa ships_left
+        self.stats.ships_left -=1
+
+        # Descarta quaisquer projéteis e alienígenas restantes
+        self.bullets.empty()
+        self.aliens.empty()
+
+        # Cria uma frota nova e centraliza a espaçonave
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # pausa
+        sleep(0.5)
     
     def _create_fleet(self):
         """ Cria a frota de alienígenas """

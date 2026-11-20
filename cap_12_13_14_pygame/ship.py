@@ -36,3 +36,6 @@ class Ship:
     def blitme(self):
         """ Desenha a espaçonave em sua localização atual """
         self.screen.blit(self.image, self.rect)
+
+    def center_ship(self):
+        pass
