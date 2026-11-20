@@ -31,13 +31,18 @@ class AlienInvasion():
 
         self._create_fleet()
 
+        self.game_active = True
+
     def run_game(self):
         """ Inicia o loop principal do jogo """
         while True:
             self._check_events()
-            self.ship.update()
-            self._uppdate_bullets()
-            self._update_aliens()
+
+            if self.game_active:
+                self.ship.update()
+                self._uppdate_bullets()
+                self._update_aliens()
+                
             self._update_screen()
             self.clock.tick(60)
           
@@ -106,21 +111,36 @@ class AlienInvasion():
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
             self._ship_hit()
 
+        # Procura por alienígenas se chocando contra a parte inferior da tela
+        self._check_aliens_bottom()
+
+    def _check_aliens_bottom(self):
+        """ Verifica se algum alienígena chegou à parte inferior da tela """
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= self.settings.screen_height:
+                # Trata isso como se a espaçonave tivesse sido abatida
+                self.ship_hit()
+                break
+
     def _ship_hit(self):
         """ Responde à espaçonave sendo abatida por um alienígena """
-        # Drecementa ships_left
-        self.stats.ships_left -=1
+        if self.stats.ships_left > 0:
+            # Drecrementa ships_left
+            self.stats.ships_left -=1
 
-        # Descarta quaisquer projéteis e alienígenas restantes
-        self.bullets.empty()
-        self.aliens.empty()
+            # Descarta quaisquer projéteis e alienígenas restantes
+            self.bullets.empty()
+            self.aliens.empty()
 
-        # Cria uma frota nova e centraliza a espaçonave
-        self._create_fleet()
-        self.ship.center_ship()
+            # Cria uma frota nova e centraliza a espaçonave
+            self._create_fleet()
+            self.ship.center_ship()
 
-        # pausa
-        sleep(0.5)
+            # pausa
+            sleep(0.5)
+
+        else:
+            self.game_active = False
     
     def _create_fleet(self):
         """ Cria a frota de alienígenas """
