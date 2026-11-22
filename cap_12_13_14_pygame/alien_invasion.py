@@ -18,12 +18,12 @@ class AlienInvasion():
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSREEN)
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
 
-        # Cria uma instâmcia para armazenar estatísticas do jogo
+        # Cria uma instância para armazenar estatísticas do jogo
         self.stats = Gamestats(self)
 
         self.ship = Ship(self)
@@ -45,7 +45,7 @@ class AlienInvasion():
 
             if self.game_active:
                 self.ship.update()
-                self._uppdate_bullets()
+                self._update_bullets()
                 self._update_aliens()
                 
             self._update_screen()
@@ -54,16 +54,20 @@ class AlienInvasion():
     def _check_events(self):
         """ Responde as teclas pressionadas e a eventos do mouse """
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                     self._check_keydown_events(event)
-                elif event.type == pygame.KEYUP:
-                     self._check_keyup_events(event)
-                elif event.type == pygame.K_q:
-                    sys.exit()
-                elif event.key == pygame.K_SPACE:
-                    self._fire_bullet()
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                self._check_keydown_events(event)
+            elif event.type == pygame.KEYUP:
+                self._check_keyup_events(event)              
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
+
+    def _check_play_button(self, mouse_pos):
+        """ Inicia um jogo novo quando o jogador clica em Play """
+        if self.play_button.rect.collidepoint(mouse_pos):
+            self.game_active = True
 
     def _check_keydown_events(self, event):
         """ Responde a teclas clicadas """
@@ -71,6 +75,10 @@ class AlienInvasion():
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
+        elif event.type == pygame.K_q:
+            sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
     
     def _check_keyup_events(self, event):
         """ Responde a teclas soltas """
@@ -79,7 +87,7 @@ class AlienInvasion():
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
-    def _fire_bullets(self):
+    def _fire_bullet(self):
         """ Cria um novo projétil e o adiciona ao grupo de projéteis """
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
@@ -154,7 +162,7 @@ class AlienInvasion():
         # O distanciamento entre os alienígenas é a largura
         # de um alienígena e uma altura de alienígena
         alien = Alien(self)
-        alien_width, alien_height = alien.rect.width, alien_height
+        alien_width, alien_height = alien.rect.width, alien.rect.height
 
         current_x, current_Y = alien_width, alien_height
         while current_Y < (self.settings.screen_height - 3 * alien_width):
@@ -189,7 +197,7 @@ class AlienInvasion():
                             
     def _update_screen(self):
         """ Atualiza as imagens na tela e mude para a nova tela """
-        self.screen.fill(self.settings.bg_collor)
+        self.screen.fill(self.settings.bg_color)
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
@@ -197,7 +205,7 @@ class AlienInvasion():
 
         # Desenha o botão Play se o jogo estiver inativo
         if not self.game_active:
-            self.play_button()
+            self.play_button.draw_button()
 
         # Deixa a tela desenhada mais recente visível
         pygame.display.flip()

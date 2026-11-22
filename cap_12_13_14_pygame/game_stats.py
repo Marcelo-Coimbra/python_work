@@ -1,9 +1,9 @@
 class Gamestats:
     """ Rastreia as estatísticas de Invasão Alienígena """
 
-    def __ini__(self, ai_game):
+    def __init__(self, ai_game):
         """ Inicializa as estatísticas """
-        self.setings = ai_game.settings
+        self.settings = ai_game.settings
         self.reset_stats()
 
     def reset_stats(self):

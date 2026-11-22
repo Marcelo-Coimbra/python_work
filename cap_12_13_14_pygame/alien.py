@@ -12,7 +12,7 @@ class Alien(Sprite):
 
         # Carrega a imagem do alienígena e define seu atributo rect
         self.image = pygame.image.load('images/alien.bmp')
-        self.rect = self.image_rect()
+        self.rect = self.image.get_rect()
 
         # Inicia cada alienígena novo perto do canto superior esquerdo da tela
         self.rect.x = self.rect.width
@@ -23,10 +23,10 @@ class Alien(Sprite):
 
     def check_edges(self):
         """ Retorna True se o alienígena estiver na borda da tela """
-        screen_rect = self.screen_rect.get_rect()
+        screen_rect = self.screen.get_rect()
         return (self.rect.right >= screen_rect.right) or (self.rect.left <=0)
   
     def update(self):
         """ Desloca o alienígena para a direita ou para a esquerda """
         self.x += self.settings.alien_speed * self.settings.fleet_direction
-        self.rect.x = self.x2
+        self.rect.x = self.x
