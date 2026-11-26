@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import Gamestats
+from  scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
@@ -23,8 +24,10 @@ class AlienInvasion():
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
 
-        # Cria uma instância para armazenar estatísticas do jogo
+        # Cria uma instância para armazenar estatísticas do jogo,
+        # e cria um scoreboard
         self.stats = Gamestats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -71,6 +74,7 @@ class AlienInvasion():
             # Redefine as estatísticas do jogo
             self.settings.initialize_dynamic_settings()
             self.stats.reset_stats()
+            self.sb.prep_score()
             self.game_active = True
             # Oculta o cursos do mouse
             pygame.mouse.set_visible(False)
@@ -123,6 +127,10 @@ class AlienInvasion():
         """ Responde à colisões alienígenas """
         # Remove todos os projéteis e os alienígenas que tenham colidido
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        if collisions:
+            self.stats.score += self.settings.alien_points
+            self.sb.prep_score()
 
         if not self.aliens:
             # Destrói os projéteis existentes e cria uma frota nova
@@ -218,6 +226,9 @@ class AlienInvasion():
             bullet.draw_bullet()
         self.ship.blitme()
         self.aliens.draw(self.screen)
+
+        # Desenha as informações de pontuação
+        self.sb.show_score()
 
         # Desenha o botão Play se o jogo estiver inativo
         if not self.game_active:

@@ -30,4 +30,3 @@ class Scoreboard:
     def show_score(self):
         """ Desenha a pontuação na tela """
         self.screen.blit(self.score_image, self.score_rect)
-
